@@ -1,11 +1,13 @@
 {
   "scripts": {
     "dev": "wrangler dev src/index.tsx",
-    "deploy": "wrangler deploy --minify src/index.ts"
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "build": "wrangler deploy --dry-run --outdir=./dist"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.1.11",
     "hono": "^3.10.2",
+    "htmx.org": "^1.9.9",
     "zod": "^3.22.4"
   },
   "devDependencies": {
