@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.tsx",
     "deploy": "wrangler deploy --minify src/index.ts",
-    "build": "wrangler deploy --dry-run --outdir=./dist --compatibility-date 2023-12-08"
+    "build": "wrangler deploy --outdir=./dist --compatibility-date 2023-12-08"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.1.11",

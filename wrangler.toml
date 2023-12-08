@@ -2,7 +2,7 @@ name = "cloudflare"
 main = "src/index.tsx"
 compatibility_date = "2023-01-01"
 kv_namespaces = [
-  { binding = "DB", id = "example_db" }
+  { binding = "DB", id = "f27a02064f8f4f3eb2c284958e4a9f16" }
 ]
 
 # [vars]
