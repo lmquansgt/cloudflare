@@ -1,0 +1,17 @@
+name = "cloudflare"
+main = "src/index.tsx"
+compatibility_date = "2023-01-01"
+kv_namespaces = [
+  { binding = "DB", id = "example_db" }
+]
+
+# [vars]
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
