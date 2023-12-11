@@ -1,8 +1,8 @@
 {
   "scripts": {
     "dev": "wrangler dev src/index.ts  --live-reload",
-    "deploy": "wrangler deploy --outdir=./dist --minify src/index.ts",
-    "build": "wrangler deploy --outdir=./dist --compatibility-date 2023-12-08"
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "build": "wrangler deploy --outdir=./dist --minify src/index.ts"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.1.11",
