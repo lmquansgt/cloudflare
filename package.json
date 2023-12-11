@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "wrangler dev src/index.tsx",
+    "dev": "wrangler dev src/index.ts --live-reload",
     "deploy": "wrangler deploy --minify src/index.ts",
     "build": "wrangler deploy --outdir=./dist --compatibility-date 2023-12-08"
   },
@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230914.0",
+    "jspdf": "^2.5.1",
     "wrangler": "^3.18.0"
   }
 }

@@ -1,5 +1,4 @@
-import { AddTodo } from "../../components"
-import { Item } from "../../components"
+import { AddTodo, Item } from "../../components"
 
 type Todo = {
 	id: string,

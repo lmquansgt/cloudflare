@@ -1,5 +1,9 @@
-import app from "../core/app"
+import { Hono } from 'hono'
 
-app.get('/test', async (c) => {
+const app = new Hono()
+
+app.get('/', async (c) => {
   return c.text('Test')
 })
+
+export default app

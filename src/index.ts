@@ -1,8 +1,10 @@
-import app from './core/app'
-import { renderer } from './components'
+import { Hono } from 'hono'
+import test from './routes/test'
+import todos from './routes/todo'
 
-app.get('*', renderer)
-import './routes/todo'
-import './routes/test'
+const app = new Hono()
 
-export default app
+app.route('/todos', todos)
+app.route('/test', test)
+
+export default app 
