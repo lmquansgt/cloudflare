@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import { validator } from "hono/validator";
 import { z } from "zod";
-import { AddTodo, AddTodoResponse, TodoCount, renderer } from "../components";
+import {
+    AddTodo,
+    AddTodoResponse,
+    TodoCount,
+    UpdateTodo
+} from "../components";
 import { Todo } from "../pages/Todo";
 
 type Bindings = {
@@ -9,8 +14,6 @@ type Bindings = {
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
-
-app.get("*", renderer);
 
 app.get("/", async (c) => {
   const { keys } = await c.env.DB.list();
@@ -39,7 +42,7 @@ const createTodoSchema = z.object({
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_type) {
     if (issue.expected === "string") {
-      return { message: "bad type!" };
+      return { message: "Todo title must be a string" };
     }
   }
   if (issue.code === "too_small") {
@@ -67,7 +70,7 @@ app.post(
     const { title } = c.req.valid("form");
     const id = crypto.randomUUID();
     await c.env.DB.put(id, title);
-    c.header("HX-Trigger", "updateTodo");
+    c.header("HX-Trigger", "UpdateTodo");
     return c.render(AddTodoResponse({ title, id }));
   },
 );
@@ -75,9 +78,41 @@ app.post(
 app.delete("/delete/:id", async (c) => {
   const id = c.req.param("id");
   await c.env.DB.delete(id);
-  c.header("HX-Trigger", "updateTodo");
+  c.header("HX-Trigger", "UpdateTodo");
   c.status(200);
   return c.body(null);
 });
+
+app.get("/update/:id", async (c) => {
+  const id = c.req.param("id");
+  let title = await c.env.DB.get(id);
+  if (!title) {
+    title = "DB error";
+  }
+  return c.render(UpdateTodo({ id, title }));
+});
+
+app.put(
+  "/update/:id",
+  validator("form", (value, c) => {
+    const results = createTodoSchema.safeParse(value, {
+      errorMap: customErrorMap,
+    });
+    if (!results.success) {
+      return c.html(
+        AddTodo({ value: value.title as string, errors: results.error.issues }),
+      );
+    }
+    return results.data;
+  }),
+  async (c) => {
+    const id = c.req.param("id");
+    const { title } = c.req.valid("form");
+    await c.env.DB.put(id, title);
+    c.header("HX-Location", "/todos");
+    c.status(204);
+    return c.body(null);
+  },
+);
 
 export default app;

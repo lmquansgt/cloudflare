@@ -11,45 +11,17 @@ export const renderer = jsxRenderer(({ children }) => {
         <script src="https://unpkg.com/htmx.org@1.9.3"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-        <script
-          src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
-          integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
-          crossorigin="anonymous"
-        ></script>
         <title>Hono + htmx</title>
       </head>
       <body>
         <div class="p-4">
-          <button
-            type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center"
-            onclick="exportPdf()"
-          >
-            Export PDF
-          </button>
-          <script>
-            function exportPdf(e) {
-              const doc = new jsPDF("p", "pt", "a4");
-
-              doc.html(document.body, {
-                callback: function (doc) {
-                  doc.save();
-                },
-                x: 0,
-                y: 0,
-                width: 100,
-                windowWidth: 100,
-              });
-            }
-          </script>
           <h1
             hx-get="/todos/api/todo/count"
             hx-swap="outerHTML"
-            hx-trigger="load, updateTodo from:body"
+            hx-trigger="load, UpdateTodo from:body"
             class="text-4xl font-bold mb-4"
           >
-            Todo
+            Todo count:
           </h1>
           ${children}
         </div>
@@ -62,10 +34,10 @@ export const TodoCount = (amount: number) => (
   <h1
     hx-get="/todos/api/todo/count"
     hx-swap="outerHTML"
-    hx-trigger="updateTodo from:body"
+    hx-trigger="UpdateTodo from:body"
     class="text-4xl font-bold mb-4"
   >
-    {`Todo: ${amount}`}
+    {`Todo count: ${amount}`}
   </h1>
 );
 
@@ -83,7 +55,6 @@ export const AddTodo = ({ value, errors }: AddTodoProps) => (
   <form
     id="form"
     hx-post="/todos/create"
-    hx-target="this"
     hx-swap="outerHTML"
     _="on htmx:afterRequest reset() me"
     class="mb-4"
@@ -113,11 +84,11 @@ export const AddTodo = ({ value, errors }: AddTodoProps) => (
 
 export const Item = ({ title, id }: { title: string; id: string }) => (
   <p class="flex row items-center justify-between py-1 px-4 my-1 rounded-lg text-lg border bg-gray-100 text-gray-600 mb-2">
-    {title}
+    <a href={`/todos/update/${id}`}>{title}</a>
     <button
-      hx-target="closest p"
-      hx-swap="outerHTML"
       hx-delete={`todos/delete/${id}`}
+      hx-target="closest p"
+      hx-swap="delete"
       class="font-medium"
     >
       Delete
@@ -133,9 +104,29 @@ export const AddTodoResponse = ({
   id: string;
 }) => (
   <>
-    <div hx-swap-oob="beforebegin:#todo">
+    <div hx-swap-oob="beforeend:#wrapper">
       <Item title={title} id={id} />
     </div>
     <AddTodo />
   </>
+);
+
+export const UpdateTodo = ({ id, title }: { id: string; title: string }) => (
+  <form id="form" hx-put={`${id}`}>
+    <div class="flex flex-col py-1 px-4 my-1 rounded-lg text-lg border bg-gray-100 text-gray-600 mb-2">
+      <div class="flex gap-6">
+        <h6>Title:</h6>
+        <input class="bg-gray-100 text-gray-600" name="title" value={title} />
+      </div>
+      <div class="flex gap-6">
+        <h6>Id:</h6>
+        <div>{id}</div>
+      </div>
+    </div>
+    <div>
+      <button class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center">
+        Update
+      </button>
+    </div>
+  </form>
 );
